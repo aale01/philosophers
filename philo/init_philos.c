@@ -14,6 +14,8 @@ int	init_philos(t_philo **philos, t_shared *sh)
 		(*philos)[i].left = (i + sh->n - 1) % sh->n;
 		(*philos)[i].right = (i + 1) % sh->n;
 		(*philos)[i].sh = sh;
+		(*philos)[i].meals = 0;
+		(*philos)[i].last_meal = 0;
 		i++;
 	}
 	return (SUCCESS);

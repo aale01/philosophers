@@ -26,6 +26,8 @@ SRCSDIR = ./
 SRCS =	main.c				\
 		init_shared.c		\
 		init_philos.c		\
+		execute_eating.c	\
+		routine.c			\
 
 
 OBJDIR = $(SRCSDIR)/obj

@@ -6,7 +6,7 @@
 /*   By: abecucci <abecucci@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 16:40:28 by abecucci          #+#    #+#             */
-/*   Updated: 2026/02/16 20:23:04 by abecucci         ###   ########.fr       */
+/*   Updated: 2026/02/17 13:33:02 by abecucci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,16 +45,19 @@ typedef struct s_shared
 
 typedef struct s_philo {
 	int			id;
-	pthread_t	thread;
+	pthread_t	*thread;
 	int			left;
 	int			right;
-	long		last_meal;
 	int			meals;
+	long		last_meal;
 	t_shared	*sh;
 }				t_philo;
 
 /* --- FUNZIONI --- */
 int				init_shared(t_shared *sh, int argc, char **argv);
 int				init_philos(t_philo **philos, t_shared *sh);
+void			execute_must_eating(t_philo *philos);
+void			execute_eating_to_die(t_philo *philos);
+void			*routine(void *philo);
 
 #endif //PHILOSOPHERS_H

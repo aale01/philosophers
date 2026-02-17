@@ -21,6 +21,10 @@ int	main(int argc, char **argv)
 		return (EXIT_FAILURE);
 	if (init_philos(&philos, &shared) != SUCCESS)
 		return (EXIT_FAILURE);
+	if (shared.must_eat >= 0)
+		execute_must_eating(philos);
+	else
+		execute_eating_to_die(philos);
 	return (EXIT_SUCCESS);
 }
 

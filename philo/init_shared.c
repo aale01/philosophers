@@ -67,12 +67,18 @@ static int	parse_args(t_shared *sh, int argc, char **argv)
 
 int	init_shared(t_shared *sh, int argc, char **argv)
 {
+	int i;
+
 	if (!sh)
 		return (FAILURE);
 	if (parse_args(sh, argc, argv) != SUCCESS)
 		return (FAILURE);
 	sh->start = 0;
 	sh->forks = (pthread_mutex_t *)malloc(sh->n * sizeof(pthread_mutex_t));
-	// pthread_mutex_init(sh->forks, NULL);
+	i = 0;
+	while (i < sh->n)
+		pthread_mutex_init(&sh->forks[i++], NULL);
+	pthread_mutex_init(&sh->print_mtx, NULL);
+	pthread_mutex_init(&sh->state_mtx, NULL);
 	return (SUCCESS);
 }

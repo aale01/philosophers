@@ -6,7 +6,7 @@
 /*   By: abecucci <abecucci@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 16:23:28 by abecucci          #+#    #+#             */
-/*   Updated: 2026/02/16 23:40:43 by abecucci         ###   ########.fr       */
+/*   Updated: 2026/02/17 17:21:12 by abecucci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,13 @@ int	main(int argc, char **argv)
 	if (init_philos(&philos, &shared) != SUCCESS)
 		return (EXIT_FAILURE);
 	if (shared.must_eat >= 0)
-		execute_must_eating(philos);
+	{
+		if (execute_must_eating(philos) != SUCCESS)
+			return (EXIT_FAILURE);
+	}
 	else
-		execute_eating_to_die(philos);
+		if (execute_eating_to_die(philos) != SUCCESS)
+			return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 

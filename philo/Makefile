@@ -29,6 +29,7 @@ SRCS =	main.c				\
 		execute_eating.c	\
 		routine.c			\
 		time.c				\
+		cleanup.c			\
 
 
 OBJDIR = $(SRCSDIR)/obj

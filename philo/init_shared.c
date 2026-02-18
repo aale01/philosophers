@@ -1,14 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_args.c                                       :+:      :+:    :+:   */
+/*   init_shared.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abecucci <abecucci@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 20:06:57 by abecucci          #+#    #+#             */
-/*   Updated: 2026/02/16 23:12:03 by abecucci         ###   ########.fr       */
+/*   Updated: 2026/02/18 16:25:22 by abecucci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "philosophers.h"
 
@@ -74,11 +75,13 @@ int	init_shared(t_shared *sh, int argc, char **argv)
 	if (parse_args(sh, argc, argv) != SUCCESS)
 		return (FAILURE);
 	sh->forks = (pthread_mutex_t *)malloc(sh->n * sizeof(pthread_mutex_t));
+	if (!sh->forks)
+		return (FAILURE);
 	i = 0;
 	while (i < sh->n)
 		pthread_mutex_init(&sh->forks[i++], NULL);
 	pthread_mutex_init(&sh->print_mtx, NULL);
-	pthread_mutex_init(&sh->state_mtx, NULL);
-	pthread_mutex_init(&sh->start_mtx, NULL);
+	pthread_mutex_init(&sh->start_cond_mtx, NULL);
+	pthread_mutex_init(&sh->stop_mtx, NULL);
 	return (SUCCESS);
 }

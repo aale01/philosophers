@@ -20,15 +20,16 @@ int	main(int argc, char **argv)
 	if (init_shared(&shared, argc, argv) != SUCCESS)
 		return (EXIT_FAILURE);
 	if (init_philos(&philos, &shared) != SUCCESS)
-		return (EXIT_FAILURE);
+		return (cleanup_fail(&shared, &philos));
 	if (shared.must_eat >= 0)
 	{
 		if (execute_must_eating(philos) != SUCCESS)
-			return (EXIT_FAILURE);
+			return (cleanup_fail(&shared, &philos));
 	}
 	else
 		if (execute_eating_to_die(philos) != SUCCESS)
-			return (EXIT_FAILURE);
+			return (cleanup_fail(&shared, &philos));
+	cleanup(&shared, &philos);
 	return (EXIT_SUCCESS);
 }
 

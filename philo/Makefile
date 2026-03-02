@@ -27,6 +27,7 @@ SRCS =	main.c				\
 		init_shared.c		\
 		init_philos.c		\
 		execute_eating.c	\
+		monitor.c			\
 		routine.c			\
 		utils.c				\
 		cleanup.c			\

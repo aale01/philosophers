@@ -29,7 +29,7 @@ int	init_philos(t_philo **philos, t_shared *sh)
 		(*philos)[i].sh = sh;
 		(*philos)[i].meals = 0;
 		(*philos)[i].last_meal = 0;
-		pthread_mutex_init(&(*philos)[i].meal_mtx, NULL);
+		pthread_mutex_init(&(*philos)[i].last_meal_mtx, NULL);
 		i++;
 	}
 	return (SUCCESS);

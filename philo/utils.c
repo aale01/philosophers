@@ -39,3 +39,10 @@ t_bool	should_stop(t_shared *sh)
 	pthread_mutex_unlock(&sh->stop_mtx);
 	return (stop);
 }
+
+void	raise_stop(t_shared *sh)
+{
+	pthread_mutex_lock(&sh->stop_mtx);
+	sh->stop = True;
+	pthread_mutex_unlock(&sh->stop_mtx);
+}

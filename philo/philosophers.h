@@ -6,7 +6,7 @@
 /*   By: abecucci <abecucci@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 16:40:28 by abecucci          #+#    #+#             */
-/*   Updated: 2026/03/02 19:36:57 by abecucci         ###   ########.fr       */
+/*   Updated: 2026/03/02 20:46:42 by abecucci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,8 @@ typedef struct s_philo {
 	int				right;
 	int				meals;
 	int64_t			last_meal;
-	pthread_mutex_t	meal_mtx;
+	pthread_mutex_t	meals_mtx;
+	pthread_mutex_t	last_meal_mtx;
 	t_shared		*sh;
 }					t_philo;
 
@@ -65,12 +66,13 @@ typedef struct s_philo {
 int				init_shared(t_shared *sh, int argc, char **argv);
 int				init_philos(t_philo **philos, t_shared *sh);
 
-int				execute_must_eating(t_philo *philos);
-int				execute_eating_to_die(t_philo *philos);
+int				start_simulation(t_philo *philos);
+
+void			monitor(t_philo *philos);
+
 void			*routine(void *arg);
 
 void			cleanup(t_shared *sh, t_philo **philos);
 int				cleanup_fail(t_shared *sh, t_philo **philos);
-
 
 #endif //PHILOSOPHERS_H

@@ -21,14 +21,8 @@ int	main(int argc, char **argv)
 		return (EXIT_FAILURE);
 	if (init_philos(&philos, &shared) != SUCCESS)
 		return (cleanup_fail(&shared, &philos));
-	if (shared.must_eat >= 0)
-	{
-		if (execute_must_eating(philos) != SUCCESS)
-			return (cleanup_fail(&shared, &philos));
-	}
-	else
-		if (execute_eating_to_die(philos) != SUCCESS)
-			return (cleanup_fail(&shared, &philos));
+	if (start_simulation(philos) != SUCCESS)
+		return (cleanup_fail(&shared, &philos));
 	cleanup(&shared, &philos);
 	return (EXIT_SUCCESS);
 }

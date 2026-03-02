@@ -20,7 +20,7 @@ void	cleanup(t_shared *sh, t_philo **philos)
 	{
 		i = 0;
 		while (i < (*philos)->sh->n)
-			pthread_mutex_destroy(&(*philos)[i++].meal_mtx);
+			pthread_mutex_destroy(&(*philos)[i++].last_meal_mtx);
 		free(*philos);
 		*philos = NULL;
 	}

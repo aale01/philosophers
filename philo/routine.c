@@ -61,9 +61,9 @@ static void	philosophers_loop(t_philo *p)
 	{
 		if (take_forks_no_deadlock(p, &first, &second) == False)
 			break ;
-		pthread_mutex_lock(&p->meal_mtx);
+		pthread_mutex_lock(&p->last_meal_mtx);
 		p->last_meal = time_now_ms();
-		pthread_mutex_unlock(&p->meal_mtx);
+		pthread_mutex_unlock(&p->last_meal_mtx);
 		print_state(p, "is eating");
 		usleep(p->sh->t_eat * 1000);
 		p->meals++;

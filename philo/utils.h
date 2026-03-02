@@ -1,24 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   time.c                                             :+:      :+:    :+:   */
+/*   utils.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abecucci <abecucci@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/17 17:35:48 by abecucci          #+#    #+#             */
-/*   Updated: 2026/02/17 18:02:56 by abecucci         ###   ########.fr       */
+/*   Created: 2026/03/02 19:44:41 by abecucci          #+#    #+#             */
+/*   Updated: 2026/03/02 19:49:08 by abecucci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers.h"
+#ifndef PHILOSOPHERS_UTILS_H
+# define PHILOSOPHERS_UTILS_H
 
-int64_t	time_now_ms(void)
-{
-	struct timeval tv;
+/* --- STRUTTURE --- */
+typedef enum e_bool		t_bool;
+typedef struct s_shared	t_shared;
+typedef struct s_philo	t_philo;
 
-	gettimeofday(&tv, NULL);
-	// printf("usec: %ld\n", tv.tv_usec);
-	// printf("sec: %ld\n", tv.tv_sec);
-	// printf("time: %ld\n", tv.tv_sec * 1000000 + tv.tv_usec);
-	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
-}
+
+/* --- FUNZIONI --- */
+int64_t			time_now_ms(void);
+void			print_state(t_philo *p, const char *state);
+t_bool			should_stop(t_shared *sh);
+
+
+#endif //PHILOSOPHERS_UTILS_H

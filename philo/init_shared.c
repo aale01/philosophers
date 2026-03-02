@@ -6,7 +6,7 @@
 /*   By: abecucci <abecucci@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 20:06:57 by abecucci          #+#    #+#             */
-/*   Updated: 2026/02/18 16:25:22 by abecucci         ###   ########.fr       */
+/*   Updated: 2026/03/02 17:07:09 by abecucci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ int	init_shared(t_shared *sh, int argc, char **argv)
 		return (FAILURE);
 	if (parse_args(sh, argc, argv) != SUCCESS)
 		return (FAILURE);
+	sh->stop = False;
 	sh->forks = (pthread_mutex_t *)malloc(sh->n * sizeof(pthread_mutex_t));
 	if (!sh->forks)
 		return (FAILURE);

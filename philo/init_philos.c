@@ -6,7 +6,7 @@
 /*   By: abecucci <abecucci@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 23:35:09 by abecucci          #+#    #+#             */
-/*   Updated: 2026/02/18 17:47:29 by abecucci         ###   ########.fr       */
+/*   Updated: 2026/03/02 18:05:50 by abecucci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ int	init_philos(t_philo **philos, t_shared *sh)
 	while (i < sh->n)
 	{
 		(*philos)[i].id = i + 1;
-		(*philos)[i].left = (i + sh->n - 1) % sh->n;
-		(*philos)[i].right = (i + 1) % sh->n;
+		(*philos)[i].left = i;
+		(*philos)[i].right = (sh->n + i - 1) % sh->n;
 		(*philos)[i].sh = sh;
 		(*philos)[i].meals = 0;
 		(*philos)[i].last_meal = 0;

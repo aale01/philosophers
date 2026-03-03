@@ -6,70 +6,106 @@
 /*   By: abecucci <abecucci@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 20:06:57 by abecucci          #+#    #+#             */
-/*   Updated: 2026/03/02 17:07:09 by abecucci         ###   ########.fr       */
+/*   Updated: 2026/03/03 15:31:51 by abecucci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "philosophers.h"
 
-static int	parse_positive_int(const char *s, long *out)
+static int	parse_positive_u64(const char *s, uint64_t *out)
 {
-	long	acc;
-	int		i;
+	uint64_t	acc;
+	int			i;
 
 	if (!s || !*s || !out)
-		return (0);
+		return (FAILURE);
 	i = 0;
 	while (s[i] == ' ' || (s[i] >= 9 && s[i] <= 13))
 		i++;
 	if (s[i] == '+')
 		i++;
 	if (s[i] == '-' || s[i] == '\0')
-		return (0);
+		return (FAILURE);
 	acc = 0;
 	while (s[i])
 	{
 		if (s[i] < '0' || s[i] > '9')
-			return (0);
+			return (FAILURE);
 		acc = acc * 10 + (s[i] - '0');
 		if (acc > INT_MAX)
-			return (0);
+			return (FAILURE);
 		i++;
 	}
-	*out = (int)acc;
-	return (1);
+	*out = acc;
+	return (SUCCESS);
 }
 
 static int	parse_args(t_shared *sh, int argc, char **argv)
 {
+	uint64_t	tmp;
+
 	if (!sh || !argv || argc < 5 || argc > 6)
 		return (FAILURE);
-	if (!parse_positive_int(argv[1], (long *)&sh->n)
-		|| !parse_positive_int(argv[2], &sh->t_die)
-		|| !parse_positive_int(argv[3], &sh->t_eat)
-		|| !parse_positive_int(argv[4], &sh->t_sleep))
+	if (!parse_positive_u64(argv[1], &tmp))
 		return (FAILURE);
-	if (sh->n < 1
-		|| sh->t_die < 1
-		|| sh->t_eat < 1
-		|| sh->t_sleep < 1)
+	sh->n = (int)tmp;
+	if (parse_positive_u64(argv[2], &sh->t_die) == FAILURE
+		|| parse_positive_u64(argv[3], &sh->t_eat) == FAILURE
+		|| parse_positive_u64(argv[4], &sh->t_sleep) == FAILURE)
+		return (FAILURE);
+	if (sh->n < 1 || sh->t_die < 1 || sh->t_eat < 1 || sh->t_sleep < 1)
 		return (FAILURE);
 	if (argc == 6)
 	{
-		if (!parse_positive_int(argv[5], (long *)&sh->must_eat)
-			|| sh->must_eat < 1)
-		return (FAILURE);
+		if (!parse_positive_u64(argv[5], &tmp) || tmp < 1)
+			return (FAILURE);
+		sh->must_eat_count = (int)tmp;
 	}
 	else
-		sh->must_eat = -1;
+		sh->must_eat_count = -1;
+	return (SUCCESS);
+}
+
+static int	init_forks(t_shared *sh)
+{
+	int	i;
+
+	i = 0;
+	while (i < sh->n)
+	{
+		if (pthread_mutex_init(&sh->forks[i], NULL) != SUCCESS)
+		{
+			while (i > 0)
+				pthread_mutex_destroy(&sh->forks[--i]);
+			free(sh->forks);
+			sh->forks = NULL;
+			return (FAILURE);
+		}
+		i++;
+	}
+	return (SUCCESS);
+}
+
+static int	init_mutexes(t_shared *sh)
+{
+	int	i;
+
+	if (pthread_mutex_init(&sh->print_mtx, NULL) != SUCCESS
+		|| pthread_mutex_init(&sh->start_cond_mtx, NULL) != SUCCESS
+		|| pthread_mutex_init(&sh->stop_mtx, NULL) != SUCCESS)
+	{
+		i = 0;
+		while (i < sh->n)
+			pthread_mutex_destroy(&sh->forks[i++]);
+		free(sh->forks);
+		sh->forks = NULL;
+		return (FAILURE);
+	}
 	return (SUCCESS);
 }
 
 int	init_shared(t_shared *sh, int argc, char **argv)
 {
-	int i;
-
 	if (!sh)
 		return (FAILURE);
 	if (parse_args(sh, argc, argv) != SUCCESS)
@@ -78,11 +114,9 @@ int	init_shared(t_shared *sh, int argc, char **argv)
 	sh->forks = (pthread_mutex_t *)malloc(sh->n * sizeof(pthread_mutex_t));
 	if (!sh->forks)
 		return (FAILURE);
-	i = 0;
-	while (i < sh->n)
-		pthread_mutex_init(&sh->forks[i++], NULL);
-	pthread_mutex_init(&sh->print_mtx, NULL);
-	pthread_mutex_init(&sh->start_cond_mtx, NULL);
-	pthread_mutex_init(&sh->stop_mtx, NULL);
+	if (init_forks(sh) != SUCCESS)
+		return (FAILURE);
+	if (init_mutexes(sh) != SUCCESS)
+		return (FAILURE);
 	return (SUCCESS);
 }

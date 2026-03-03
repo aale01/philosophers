@@ -12,45 +12,38 @@
 
 #include "philosophers.h"
 
-static void set_start_time(t_philo *philos)
+static void	set_start_time(t_philo *philo)
 {
-	int  i;
-	long start_time;
+	int		i;
+	long	start_time;
 
 	start_time = time_now_ms();
 	i = 0;
-	philos->sh->start_time = start_time;
-	while (i < philos->sh->n)
+	philo->sh->start_time = start_time;
+	while (i < philo->sh->n)
 	{
-		philos[i].last_meal = start_time;
+		philo[i].last_meal = start_time;
 		i++;
 	}
 }
 
-static int	create_philo(t_philo *philos)
+static void	*routine(void *arg)
 {
-	int i;
+	t_philo	*philos;
 
-	i = 0;
-	while (i < philos->sh->n)
-	{
-		if (pthread_create(&philos[i].thread, NULL, routine, &philos[i]) != 0)
-		{
-			printf("pthread_create() error\n");
-			pthread_mutex_unlock(&philos->sh->start_cond_mtx);
-			return (FAILURE);
-		}
-		i++;
-	}
-	return (SUCCESS);
+	philos = (t_philo *) arg;
+	pthread_mutex_lock(&philos->sh->start_cond_mtx);
+	pthread_mutex_unlock(&philos->sh->start_cond_mtx);
+	philosophers_loop(philos);
+	return (NULL);
 }
 
-static int	join_philo(t_philo *philo)
+static int	join_philos(t_philo *philo, int count)
 {
 	int	i;
 
 	i = 0;
-	while (i < philo->sh->n)
+	while (i < count)
 	{
 		if (pthread_join(philo[i].thread, NULL) != 0)
 		{
@@ -62,15 +55,34 @@ static int	join_philo(t_philo *philo)
 	return (SUCCESS);
 }
 
-int start_simulation(t_philo *philos)
+static int	create_philos(t_philo *philo)
 {
-	pthread_mutex_lock(&philos->sh->start_cond_mtx);
+	int	i;
+
+	i = 0;
+	while (i < philo->sh->n)
+	{
+		if (pthread_create(&philo[i].thread, NULL, routine, &philo[i]) != 0)
+		{
+			printf("pthread_create() error\n");
+			join_philos(philo, i);
+			pthread_mutex_unlock(&philo->sh->start_cond_mtx);
+			return (FAILURE);
+		}
+		i++;
+	}
+	return (SUCCESS);
+}
+
+int	start_simulation(t_philo *philos)
+{
 	set_start_time(philos);
-	if (create_philo(philos) != SUCCESS)
+	pthread_mutex_lock(&philos->sh->start_cond_mtx);
+	if (create_philos(philos) != SUCCESS)
 		return (FAILURE);
 	pthread_mutex_unlock(&philos->sh->start_cond_mtx);
-	monitor(philos);
-	if (join_philo(philos) != SUCCESS)
+	monitor_loop(philos);
+	if (join_philos(philos, philos->sh->n) != SUCCESS)
 		return (FAILURE);
 	return (SUCCESS);
 }

@@ -27,9 +27,12 @@ int	init_philos(t_philo **philos, t_shared *sh)
 		(*philos)[i].left = i;
 		(*philos)[i].right = (sh->n + i - 1) % sh->n;
 		(*philos)[i].sh = sh;
-		(*philos)[i].meals = 0;
+		(*philos)[i].eat_count = 0;
 		(*philos)[i].last_meal = 0;
-		pthread_mutex_init(&(*philos)[i].last_meal_mtx, NULL);
+		if (pthread_mutex_init(&(*philos)[i].eat_count_mtx, NULL) != SUCCESS)
+			return (FAILURE);
+		if (pthread_mutex_init(&(*philos)[i].last_meal_mtx, NULL) != SUCCESS)
+			return (FAILURE);
 		i++;
 	}
 	return (SUCCESS);

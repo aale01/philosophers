@@ -23,14 +23,14 @@ MAKEFLAGS += -s
 
 
 SRCSDIR = ./
-SRCS =	main.c				\
-		init_shared.c		\
-		init_philos.c		\
-		execute_eating.c	\
-		monitor.c			\
-		routine.c			\
-		utils.c				\
-		cleanup.c			\
+SRCS =	main.c					\
+		init_shared.c			\
+		init_philos.c			\
+		simulation.c			\
+		monitor.c				\
+		philosophers_loop.c		\
+		utils.c					\
+		cleanup.c				\
 
 
 OBJDIR = $(SRCSDIR)/obj
@@ -57,7 +57,6 @@ $(OBJDIR)/%.o: $(SRCSDIR)/%.c
 all: $(NAME)
 
 clean:
-	$(MAKE) -C $(LIBFT_DIR) clean
 	rm -rf $(OBJS)
 	printf "$(RED)$(NAME) objects deleted!$(RESET)\n"
 

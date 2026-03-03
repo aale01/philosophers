@@ -17,7 +17,6 @@ static t_bool	fork_taken(t_philo *p, int fork)
 	pthread_mutex_lock(&p->sh->forks[fork]);
 	if (should_stop(p->sh))
 	{
-		// printf("check: philo %d with fork %d\n", p->id, fork);
 		pthread_mutex_unlock(&p->sh->forks[fork]);
 		return (False);
 	}
@@ -25,10 +24,10 @@ static t_bool	fork_taken(t_philo *p, int fork)
 	return (True);
 }
 
-static t_bool	take_forks_no_deadlock(t_philo *p, int *first, int *second)
+static t_bool	take_forks(t_philo *p, int *first, int *second)
 {
-	int a;
-	int b;
+	int	a;
+	int	b;
 
 	a = p->left;
 	b = p->right;
@@ -44,7 +43,7 @@ static t_bool	take_forks_no_deadlock(t_philo *p, int *first, int *second)
 	}
 	if (!fork_taken(p, *first))
 		return (False);
-	if (!fork_taken(p, *second))
+	if (p->sh->n == 1 || !fork_taken(p, *second))
 	{
 		pthread_mutex_unlock(&p->sh->forks[*first]);
 		return (False);
@@ -52,40 +51,40 @@ static t_bool	take_forks_no_deadlock(t_philo *p, int *first, int *second)
 	return (True);
 }
 
-static void	philosophers_loop(t_philo *p)
+static void	update_last_meal(t_philo *p)
+{
+	pthread_mutex_lock(&p->last_meal_mtx);
+	p->last_meal = time_now_ms();
+	pthread_mutex_unlock(&p->last_meal_mtx);
+}
+
+static void	update_meals(t_philo *p)
+{
+	pthread_mutex_lock(&p->eat_count_mtx);
+	p->eat_count++;
+	pthread_mutex_unlock(&p->eat_count_mtx);
+}
+
+void	philosophers_loop(t_philo *p)
 {
 	int	first;
 	int	second;
 
 	while (!should_stop(p->sh))
 	{
-		if (take_forks_no_deadlock(p, &first, &second) == False)
+		if (take_forks(p, &first, &second) == False)
 			break ;
-		pthread_mutex_lock(&p->last_meal_mtx);
-		p->last_meal = time_now_ms();
-		pthread_mutex_unlock(&p->last_meal_mtx);
+		update_last_meal(p);
 		print_state(p, "is eating");
-		usleep(p->sh->t_eat * 1000);
-		p->meals++;
+		if (ft_msleep(p->sh, p->sh->t_eat) == True)
+			update_meals(p);
 		pthread_mutex_unlock(&p->sh->forks[second]);
 		pthread_mutex_unlock(&p->sh->forks[first]);
 		if (should_stop(p->sh))
 			break ;
 		print_state(p, "is sleeping");
-		usleep(p->sh->t_sleep * 1000);
-		if (should_stop(p->sh))
+		if (ft_msleep(p->sh, p->sh->t_sleep) == False)
 			break ;
 		print_state(p, "is thinking");
 	}
-}
-
-void	*routine(void *arg)
-{
-	t_philo *p;
-
-	p = (t_philo *) arg;
-	pthread_mutex_lock(&p->sh->start_cond_mtx);
-	pthread_mutex_unlock(&p->sh->start_cond_mtx);
-	philosophers_loop(p);
-	return (NULL);
 }

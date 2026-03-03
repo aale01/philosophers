@@ -6,7 +6,7 @@
 /*   By: abecucci <abecucci@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 16:40:28 by abecucci          #+#    #+#             */
-/*   Updated: 2026/03/02 20:46:42 by abecucci         ###   ########.fr       */
+/*   Updated: 2026/03/03 15:04:13 by abecucci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,9 @@
 # include <pthread.h>
 # include <sys/time.h>
 # include <limits.h>
-#include "utils.h"
+# include <stdint.h>
+# include <inttypes.h>
+# include "utils.h"
 
 /* --- MACRO --- */
 # define SUCCESS 0
@@ -29,50 +31,45 @@
 # define MONITOR_SLEEP_TIME_US 1000
 
 /* --- STRUTTURE --- */
-typedef enum e_bool
-{
-	False,
-	True
-}					t_bool;
-
 typedef struct s_shared
 {
-	int				n;
-	long			t_die;
-	long			t_eat;
-	long			t_sleep;
-	int				must_eat;
-	t_bool			stop;
-	pthread_mutex_t	*forks;
-	pthread_mutex_t	print_mtx;
-	pthread_mutex_t	start_cond_mtx;
-	pthread_mutex_t	stop_mtx;
-	long			start_time;
-}					t_shared;
+	int						n;
+	uint64_t				t_die;
+	uint64_t				t_eat;
+	uint64_t				t_sleep;
+	int						must_eat_count;
+	t_bool					stop;
+	pthread_mutex_t			*forks;
+	pthread_mutex_t			print_mtx;
+	pthread_mutex_t			start_cond_mtx;
+	pthread_mutex_t			stop_mtx;
+	uint64_t				start_time;
+}							t_shared;
 
-typedef struct s_philo {
-	int				id;
-	pthread_t		thread;
-	int				left;
-	int				right;
-	int				meals;
-	int64_t			last_meal;
-	pthread_mutex_t	meals_mtx;
-	pthread_mutex_t	last_meal_mtx;
-	t_shared		*sh;
-}					t_philo;
+typedef struct s_philo
+{
+	int						id;
+	pthread_t				thread;
+	int						left;
+	int						right;
+	int						eat_count;
+	uint64_t				last_meal;
+	pthread_mutex_t			eat_count_mtx;
+	pthread_mutex_t			last_meal_mtx;
+	t_shared				*sh;
+}							t_philo;
 
 /* --- FUNZIONI --- */
-int				init_shared(t_shared *sh, int argc, char **argv);
-int				init_philos(t_philo **philos, t_shared *sh);
+int							init_shared(t_shared *sh, int argc, char **argv);
+int							init_philos(t_philo **philos, t_shared *sh);
 
-int				start_simulation(t_philo *philos);
+int							start_simulation(t_philo *philos);
 
-void			monitor(t_philo *philos);
+void						monitor_loop(t_philo *philos);
 
-void			*routine(void *arg);
+void						philosophers_loop(t_philo *p);
 
-void			cleanup(t_shared *sh, t_philo **philos);
-int				cleanup_fail(t_shared *sh, t_philo **philos);
+void						cleanup(t_shared *sh, t_philo **philos);
+int							cleanup_fail(t_shared *sh, t_philo **philos);
 
 #endif //PHILOSOPHERS_H

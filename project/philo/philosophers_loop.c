@@ -26,20 +26,15 @@ static t_bool	fork_taken(t_philo *p, int fork)
 
 static t_bool	take_forks(t_philo *p, int *first, int *second)
 {
-	int	a;
-	int	b;
-
-	a = p->left;
-	b = p->right;
-	if (a < b)
+	if (p->id % 2 == 0)
 	{
-		*first = a;
-		*second = b;
+		*first = p->right;
+		*second = p->left;
 	}
 	else
 	{
-		*first = b;
-		*second = a;
+		*first = p->left;
+		*second = p->right;
 	}
 	if (!fork_taken(p, *first))
 		return (False);

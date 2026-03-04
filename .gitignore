@@ -1,6 +1,6 @@
 .idea
 compile_commands.json
-philo/philo
+project/philo/philo
 *.o
 obj
 

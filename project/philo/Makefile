@@ -14,7 +14,7 @@ CANCEL = \033[1A\033[K
 
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -pthread -g -gdwarf-4
+CFLAGS = -Wall -Wextra -Werror -g -gdwarf-4 -pthread
 
 MAKEFLAGS += -s
 

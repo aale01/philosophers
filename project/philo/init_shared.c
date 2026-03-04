@@ -6,7 +6,7 @@
 /*   By: abecucci <abecucci@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 20:06:57 by abecucci          #+#    #+#             */
-/*   Updated: 2026/03/03 15:31:51 by abecucci         ###   ########.fr       */
+/*   Updated: 2026/03/04 21:10:47 by abecucci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,18 +46,18 @@ static int	parse_args(t_shared *sh, int argc, char **argv)
 
 	if (!sh || !argv || argc < 5 || argc > 6)
 		return (FAILURE);
-	if (!parse_positive_u64(argv[1], &tmp))
+	if (parse_positive_u64(argv[1], &tmp) != SUCCESS)
 		return (FAILURE);
 	sh->n = (int)tmp;
-	if (parse_positive_u64(argv[2], &sh->t_die) == FAILURE
-		|| parse_positive_u64(argv[3], &sh->t_eat) == FAILURE
-		|| parse_positive_u64(argv[4], &sh->t_sleep) == FAILURE)
+	if (parse_positive_u64(argv[2], &sh->t_die) != SUCCESS
+		|| parse_positive_u64(argv[3], &sh->t_eat) != SUCCESS
+		|| parse_positive_u64(argv[4], &sh->t_sleep) != SUCCESS)
 		return (FAILURE);
 	if (sh->n < 1 || sh->t_die < 1 || sh->t_eat < 1 || sh->t_sleep < 1)
 		return (FAILURE);
 	if (argc == 6)
 	{
-		if (!parse_positive_u64(argv[5], &tmp) || tmp < 1)
+		if (parse_positive_u64(argv[5], &tmp) != SUCCESS || tmp < 1)
 			return (FAILURE);
 		sh->must_eat_count = (int)tmp;
 	}

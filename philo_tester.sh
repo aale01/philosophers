@@ -45,6 +45,7 @@ if [ $NUM_ARGS -eq 4 ]; then
     # --- Modalità “morte predittiva” ---
     ALWAYS_DIED=1
     NEVER_DIED=1
+    ERROR=0
 
     counter_pid=""
     cleanup_counter() {
@@ -83,10 +84,10 @@ if [ $NUM_ARGS -eq 4 ]; then
             NEVER_DIED=0
         elif [ "$EXIT_STATUS" -eq 125 ]; then
             echo "❌ ERRORE - timeout ha fallito (argomenti invalidi o errore interno)"
-            NEVER_DIED=0
+            ERROR=1
         elif [ "$EXIT_STATUS" -eq 126 ] || [ "$EXIT_STATUS" -eq 127 ]; then
             echo "❌ ERRORE - eseguibile non trovato/non eseguibile"
-            NEVER_DIED=0
+            ERROR=1
         elif printf "%s" "$OUTPUT" | grep -q "died"; then
             echo "⚠️ Un filosofo è morto"
             NEVER_DIED=0
@@ -96,15 +97,17 @@ if [ $NUM_ARGS -eq 4 ]; then
         fi
     done
 
-    echo "-----------------------------"
-    if [ $ALWAYS_DIED -eq 1 ]; then
-        echo "🎉 In tutti i run, almeno un filosofo è sempre morto"
-    elif [ $NEVER_DIED -eq 1 ]; then
-        echo "🎉 In tutti i run, nessuno è mai morto"
-    else
-        echo "⚠️ Alcuni run hanno visto morti, altri no"
+    if [ $ERROR -eq 0 ]; then
+        echo "-----------------------------"
+        if [ $ALWAYS_DIED -eq 1 ]; then
+            echo "🎉 In tutti i run, almeno un filosofo è sempre morto"
+        elif [ $NEVER_DIED -eq 1 ]; then
+            echo "🎉 In tutti i run, nessuno è mai morto"
+        else
+            echo "⚠️ Alcuni run hanno visto morti, altri no"
+        fi
     fi
-
+    
 else
     # --- Modalità standard (5 o più argomenti) ---
     NUM_PHILO="${ARGS[0]}"

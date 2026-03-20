@@ -26,7 +26,7 @@ SRCSDIR = ./
 SRCS =	main.c					\
 		init_shared.c			\
 		init_philos.c			\
-		simulation.c			\
+		start_simulation.c		\
 		monitor.c				\
 		philosophers_loop.c		\
 		utils.c					\

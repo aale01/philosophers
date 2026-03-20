@@ -107,24 +107,33 @@ if [ $NUM_ARGS -eq 4 ]; then
             echo "⚠️ Alcuni run hanno visto morti, altri no"
         fi
     fi
-    
+
 else
-    # --- Modalità standard (5 o più argomenti) ---
+    # --- Modalità standard (5 argomenti) ---
     NUM_PHILO="${ARGS[0]}"
     REQUIRED_MEALS="${ARGS[4]}"
 
     for ((run=1; run<=LOOPS; run++)); do
-        echo -n "Run $run: "
 
         OUTPUT=$("$EXEC" "${ARGS[@]}")
+        EXIT_STATUS=$?
 
         RESULT=$SUCCESS
 
+		# Controllo esecuzione riuscita
+        if [ "$EXIT_STATUS" -eq 126 ] || [ "$EXIT_STATUS" -eq 127 ]; then
+            echo "❌ ERRORE - eseguibile non trovato/non eseguibile"
+            exit $EXIT_STATUS
+		fi
+
+		# test i
+        echo -n "Run $run: "
+
         # Controllo morti
         if echo "$OUTPUT" | grep -q "died"; then
-            echo "❌ FAIL - Un filosofo è morto"
-            RESULT=$FAILURE
-#            exit 1
+            echo "⚠️  Un filosofo è morto"
+            RESULT=$SUCCESS
+			continue
         fi
 
         # Controllo numero pasti

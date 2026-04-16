@@ -3,6 +3,7 @@ compile_commands.json
 project/philo/philo
 *.o
 obj
+Philosphers-42Project-Tester
 
 # CLion
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can

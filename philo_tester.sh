@@ -4,7 +4,7 @@ set -o pipefail
 
 if [ $# -lt 4 ]; then
     echo "Uso:"
-    echo "  $0 ./philo ./path_to_philo number_of_philosophers time_to_die time_to_eat time_to_sleep [number_of_times_each_philosopher_must_eat]"
+    echo "  $0 ./path_to_philo number_of_philosophers time_to_die time_to_eat time_to_sleep [number_of_times_each_philosopher_must_eat]"
     exit 1
 fi
 
